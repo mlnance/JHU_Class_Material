@@ -1,0 +1,9 @@
+Langmuir adsorption isotherm
+
+_X_ = ( Ka * [ x ] ) / ( 1 + Ka )
+
+plot _X_ vs [ x ] and _X_ vs ln( [ x ] )
+
+Ka = 10^3, 10^6, 10^9, and 10^12
+
+8 graphs total

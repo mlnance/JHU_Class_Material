@@ -1,0 +1,24 @@
+#!/usr/bin/python
+__author__="morganlnance"
+__question__="hw1_q8"
+
+
+from math import log
+
+
+def dielectric( T ):
+    """
+    Calculate the dielectric constant using the empirical formula and a temperature
+    :param T: float( temperature )
+    :return float
+    """
+    e = 87.740 - ( 0.40008*T ) + ( 0.0009398 * (T**2) ) - ( 0.000001410 * (T**3) )
+
+    return e
+
+
+# T 0 through 100 Celsius
+x_val = range( 101 )
+
+# T 0 through 100
+y_val = [ dielectric( T ) for T in x_val ]

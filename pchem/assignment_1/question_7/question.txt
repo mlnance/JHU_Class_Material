@@ -1,0 +1,5 @@
+Modeling the modified Hill quation ( m = 1 )
+
+X = m * ( 10^n(pH-pKa) ) / ( 1 + 10^n*(pH-pKa) )
+
+where here, pKa = 6

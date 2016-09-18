@@ -1,0 +1,46 @@
+#!/usr/bin/python
+__author__="morganlnance"
+__question__="hw1_q9"
+from itertools import permutations
+
+
+def get_permutations( heads_and_tails, num_choices ):
+    #:param heads_and_tails: list( 'H' and 'T' ) ex) [ 'H', 'H', 'H', 'T' ]
+    #:param num_choices: N
+    #:return: list( set( tuples of permutations ) )
+    return list( set( [ ''.join( x ) for x in permutations( heads_and_tails, num_choices ) ] ) )
+
+
+def get_microstates( states, N ):
+    microstates = {}
+    macrostate_num = 0
+
+    # ex) N = 4, ii = 0, 1, 2, 3, 4. heads = ii, tails = N - ii
+    for ii in range( N + 1 ):
+        heads = states[0] * ii
+        tails = states[1] * ( N - ii )
+        # ex) [ 'H', 'H', 'H', 'T' ]
+        heads_and_tails = list( ''.join( [ heads, tails ] ) )
+        permutation_set = get_permutations( heads_and_tails, N )
+        microstates[ macrostate_num ] = permutation_set
+
+        macrostate_num += 1
+
+    return microstates
+
+
+states = [ 'H', 'T' ]
+
+N = 4
+microstates = get_microstates( states, N )
+macrostates = sorted( microstates.keys() )
+print "For N = %s," %N
+for macrostate in macrostates:
+    print "  Macrostate number %s has a multiplicity of %s" %( macrostate, len( microstates[ macrostate ] ) )
+
+N = 10
+microstates = get_microstates( states, N )
+macrostates = sorted( microstates.keys() )
+print "For N = %s," %N
+for macrostate in macrostates:
+    print "  Macrostate number %s has a multiplicity of %s" %( macrostate, len( microstates[ macrostate ] ) )

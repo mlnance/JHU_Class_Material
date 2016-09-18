@@ -1,0 +1,5 @@
+Calcuate the dielectric constant of water using the standard equation for it
+
+e = 87.740 - 0.40008T + 0.0009398T^2 - 0.000001410T^3
+
+This is a purely empirical equation

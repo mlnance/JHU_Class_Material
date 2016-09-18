@@ -1,0 +1,25 @@
+#!/usr/bin/python
+__author__="morganlnance"
+__question__="hw1_q6"
+
+
+from math import log
+from numpy import arange
+
+
+def langmuir( x, Ka ):
+    """
+    Use the Langmuir adsorption isotherm to calculate X
+    :param x: float( adsorption of gas? )
+    :param Ka: float( ligand binding constant Kassociation )
+    :return float
+    """
+    X = ( float( Ka ) * float( x ) ) / ( 1 + ( float( Ka ) * float( x ) ) )
+
+    return X
+
+
+x_concentrations = [ float( 10**-x ) for x in arange( 0, 14, 0.1 ) ]
+langmuir_values = []
+for Ka in [ 10**3, 10**6, 10**9, 10**12 ]:
+    langmuir_values.extend( [ langmuir( x, Ka ) for x in x_concentrations ] )
