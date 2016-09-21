@@ -1,4 +1,4 @@
-0) am I doing any of these right? Or should they be .pml scripts without .cmd?
+0) am I doing any of these right? 0r should they be .pml scripts without .cmd? or should these be run with the @<> only?
 
 1) how do you exactly determine which residues are abcdefg
 
@@ -9,3 +9,5 @@
 4) water molecule in middle of other waters in 5c. Coordinating h-bonds?
 
 5) am I showing too many residues in 5a? What is the focus?
+
+6) how much should be in sym view? try to color based on sym obj?
