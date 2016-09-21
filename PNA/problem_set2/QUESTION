@@ -1,5 +1,11 @@
+0) am I doing any of these right? Or should they be .pml scripts without .cmd?
+
 1) how do you exactly determine which residues are abcdefg
 
-2) how to make set_view work?
+2) how to make set_view work? I think it works now in 5a
 
 3) how to make a pretty view with the proper clipping?
+
+4) water molecule in middle of other waters in 5c. Coordinating h-bonds?
+
+5) am I showing too many residues in 5a? What is the focus?
