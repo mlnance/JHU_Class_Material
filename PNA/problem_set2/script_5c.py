@@ -24,7 +24,7 @@ cmd.delete( "delete_waters" )
 cmd.select( "buried_waters", "resn hoh" )
 cmd.show( "spheres", "buried_waters" )
 cmd.set( "sphere_scale", 0.5 )
-cmd.h_add( "buried_waters" )
+#cmd.h_add( "buried_waters" )
 cmd.deselect()
 
 # select the Thr residues around the buried waters
