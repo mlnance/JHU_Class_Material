@@ -25,8 +25,11 @@ cmd.align( "1gcl and chain A and resi 9", "2zta and chain A and resi 9" )
 #cmd.super( "1gcl and chain A", "2zta and chain A" )
 
 # show CA atoms
-cmd.show( "spheres", "name ca" )
-cmd.set( "sphere_scale", "0.35" )
+#cmd.show( "spheres", "name ca" )
+#cmd.set( "sphere_scale", "0.35" )
+
+# change cartoon transparency
+cmd.set( "cartoon_transparency", "0.5" )
 
 # select a-position residues on 2zta (dimer)
 _2zta = my_obj()
@@ -48,9 +51,9 @@ cmd.deselect()
 
 # set the final view
 cmd.set_view ('''\
-    0.477873474,    0.178628594,    0.860074282,\
-        -0.098605908,    0.983823717,   -0.149543911,\
-        -0.872874737,   -0.013345651,    0.487757653,\
-        0.000025588,   -0.000082150,  -67.047599792,\
-        24.529411316,   18.095930099,   14.328298569,\
-         62.294055939,   86.796539307,  -20.000000000''' )
+     0.532562733,    0.395187587,    0.748467803,\
+    -0.627743840,    0.777577996,    0.036103889,\
+    -0.567724824,   -0.489071995,    0.662189424,\
+     0.000053290,   -0.000126574,  -48.477600098,\
+    24.474441528,   18.028413773,   14.390577316,\
+    43.106315613,   89.651206970,  -20.000000000''' )

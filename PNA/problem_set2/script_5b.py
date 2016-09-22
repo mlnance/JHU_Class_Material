@@ -19,12 +19,16 @@ cmd.remove( "resn hoh" )
 cmd.show( "cartoon" )
 cmd.hide( "lines" )
 
-# align on chain A
-cmd.super( "1gcl and chain A", "2zta and chain A" )
+# align structures
+cmd.align( "1gcl and chain A", "2zta and chain A" )
+
 
 # show CA atoms
-cmd.show( "spheres", "name ca" )
-cmd.set( "sphere_scale", "0.35" )
+#cmd.show( "spheres", "name ca" )
+#cmd.set( "sphere_scale", "0.35" )
+
+# set cartoon transparency
+cmd.set( "cartoon_transparency", "0.5" )
 
 # select d-position residues on 2zta (dimer)
 _2zta = my_obj()
@@ -46,9 +50,9 @@ cmd.deselect()
 
 # set the final view
 cmd.set_view ('''\
-     0.054921620,    0.551247716,    0.832531750,\
-    -0.880743742,    0.419553339,   -0.219698429,\
-    -0.470399141,   -0.721180677,    0.508550465,\
-    -0.000057466,    0.000006534,  -72.649322510,\
-    19.602827072,   26.242700577,    7.284172058,\
-    35.317283630,  109.982116699,  -20.000000000''' )
+     0.319376051,    0.492265671,    0.809733808,\
+    -0.882474005,    0.465868622,    0.064847313,\
+    -0.345308959,   -0.735281110,    0.583199799,\
+    -0.000008503,   -0.000050932,  -71.901115417,\
+    17.041526794,   16.113079071,    8.648363113,\
+    34.564842224,  109.229652405,  -20.000000000''' )
