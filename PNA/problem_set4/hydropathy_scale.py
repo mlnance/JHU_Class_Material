@@ -2,16 +2,18 @@
 __author__="morganlnance"
 __question__="ps4_q7"
 
-
 '''
-python hydropathy_scale.py <pdb file>
+> python hydropathy_scale.py <pdb file>
+This will dump a .png file of the hydropathy plot in your current working directory
+This script uses the octanol values from Wimley-White
 '''
 
 # imports
 import sys, os
-import matplotlib
-matplotlib.use( "TKAgg" )
+#import matplotlib
+#matplotlib.use( "TKAgg" )
 import matplotlib.pyplot as plt
+plt.rcParams.update( { "font.size" : 22 } )
 
 
 # take in the argument from the commandline (should be a pdb file)
@@ -30,27 +32,27 @@ if not pdb_file.endswith( ".pdb" ):
 
 
 # global variables
-# adapted from the Wimley-White hydrophobicity scale
-hydrophobicity_scale = { 'ALA' : 0.17, 
-                         'ARG' : 0.81, 
-                         'ASN' : 0.42, 
-                         'ASP' : -0.07, 
-                         'CYS' : -0.24, 
-                         'GLN' : 0.58, 
-                         'GLU' : -0.01, 
-                         'GLY' : 0.01, 
-                         'HIS' : 0.17, 
-                         'ILE' : -0.31, 
-                         'LEU' : -0.56, 
-                         'LYS' : 0.99, 
-                         'MET' : -0.23, 
-                         'PHE' : -1.13, 
-                         'PRO' : 0.45, 
-                         'SER' : 0.13, 
-                         'THR' : 0.14, 
-                         'TRP' : -1.85, 
-                         'TYR' : -0.94, 
-                         'VAL' : 0.07 }
+# adapted from the Wimley-White octanol hydrophobicity scale
+hydrophobicity_scale = { 'ALA' : 0.50, 
+                         'ARG' : 1.81, # charged
+                         'ASN' : 0.85, 
+                         'ASP' : 3.64,  # charged
+                         'CYS' : -0.02, 
+                         'GLN' : 0.77, 
+                         'GLU' : 3.63, # charged
+                         'GLY' : 1.15, 
+                         'HIS' : 0.11, 
+                         'ILE' : -1.12, 
+                         'LEU' : -1.25, 
+                         'LYS' : 2.80, # charged
+                         'MET' : -0.67, 
+                         'PHE' : -1.71, 
+                         'PRO' : 0.14, 
+                         'SER' : 0.46, 
+                         'THR' : 0.25, 
+                         'TRP' : -2.09, 
+                         'TYR' : -0.71, 
+                         'VAL' : -0.46 }
 window_size = 19 # should be odd!
 middle_of_window = ( window_size / 2 ) + 1  # ex. 3/2 in python is 1, so +1 gives 2 which is in the middle of 1 and 3
 
@@ -78,22 +80,24 @@ hydrophobicities = []
 for ii in range( len( uniq_res_names ) ):
     # splitting on '_' because that's how I created my unique name
     if ii+window_size <= len( uniq_res_names ):
-        # get the hydrophobicity of this residue in the middle of the window
-        res_in_mid_of_window, resnum_in_mid_of_window = [ ( res.split( '_' )[0], res.split( '_' )[2] ) for res in uniq_res_names[ ii : ii+window_size ] ][ middle_of_window ]
-        try:
-            hydrophobicity = hydrophobicity_scale[ res_in_mid_of_window ]
-            resnums.append( resnum_in_mid_of_window )
-            hydrophobicities.append( hydrophobicity )
-        except:
-            # skip residues that are not canonical
-            continue
+        # get the hydrophobicity of the window (need resname from first part of uniq_name )
+        resnames_in_window = [ res.split( '_' )[0] for res in uniq_res_names[ ii : ii+window_size ] ]
+        # pull the window out again and get the residue number that is in the middle of the window (need resnum from last part of uniq_name
+        resnum_in_mid_of_window = [ res.split( '_' )[-1] for res in uniq_res_names[ ii : ii+window_size ] ][ middle_of_window ]
+        # get the average hydrophobicity for this window
+        hydrophobicity = sum( [ hydrophobicity_scale[ resname ] for resname in resnames_in_window ] ) / len( resnames_in_window )
+        # append the residue number and the hydrophobicity
+        resnums.append( resnum_in_mid_of_window )
+        hydrophobicities.append( hydrophobicity )
 
 
 # plot the figure
-plt.figure(figsize=(16,12))
+plt.figure(figsize=(20,14))
 plt.plot( resnums, hydrophobicities )
-plt.title( "Wimley-White Hydrophobicity of Residues Found in %s" %pdb_file )
+plot_title = "Wimley-White_Octanol_Hydrophobicity_of_Residues_in_PDB_ID_%s" %pdb_file.split( ".pdb" )[0]
+plt.title( plot_title )
 plt.xlabel( "Residue Number" )
-plt.ylabel( "Wimley-White Hydrophobicity" )
-plt.show()
+plt.ylabel( "Wimley-White Octanol Hydrophobicity" )
+plt.savefig( plot_title, dpi=120, transparent=True )
+#plt.show()
 #plt.close()
