@@ -94,9 +94,9 @@ for ii in range( len( uniq_res_names ) ):
 # plot the figure
 plt.figure(figsize=(20,14))
 plt.plot( resnums, hydrophobicities )
-plot_title = "Wimley-White_Octanol_Hydrophobicity_of_Residues_in_PDB_ID_%s" %pdb_file.split( ".pdb" )[0]
+plot_title = "Wimley-White_Octanol_Hydrophobicity_of_Residues_in_%s" %pdb_file.split( ".pdb" )[0]
 plt.title( plot_title )
-plt.xlabel( "Residue Number" )
+plt.xlabel( "Residue Number (Window size of %s)" %window_size )
 plt.ylabel( "Wimley-White Octanol Hydrophobicity" )
 plt.savefig( plot_title, dpi=120, transparent=True )
 #plt.show()
