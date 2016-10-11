@@ -1,0 +1,28 @@
+load 1got.pdb, GDP, 1
+load 1tnd.pdb, GTP, 1
+
+#clean
+hide lines
+show cartoon
+show sticks, organic
+remove resn hoh
+
+#get rid of chain B, C, D of the GDP form
+hide cartoon, GDP and chain B
+hide sticks, GDP and chain B
+hide cartoon, GDP and resi 6-66
+#get rid of chain B and C of the GTP form
+hide cartoon, GTP and chain B
+hide sticks, GTP and chain B
+hide cartoon, GTP and chain C
+hide sticks, GTP and chain C
+
+align GDP, GTP and chain A
+
+set_view (\
+     0.112793393,   -0.776650906,   -0.619748890,\
+     0.968828559,    0.224417284,   -0.104911745,\
+     0.220562428,   -0.588597655,    0.777756810,\
+    -0.000089625,   -0.000132434, -122.936683655,\
+    11.847476959,   82.537063599,   47.875045776,\
+    60.306861877,  185.530502319,  -20.000000000 )
