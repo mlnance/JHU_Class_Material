@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     32238,        611]
-NotebookOptionsPosition[     31763,        590]
-NotebookOutlinePosition[     32150,        607]
-CellTagsIndexPosition[     32107,        604]
+NotebookDataLength[     32558,        620]
+NotebookOptionsPosition[     32082,        599]
+NotebookOutlinePosition[     32470,        616]
+CellTagsIndexPosition[     32427,        613]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -96,8 +96,14 @@ Cell[BoxData[
     RowBox[{"Ka", " ", 
      RowBox[{"10", "^", "9"}]}]}], "*)"}], "\[IndentingNewLine]", 
   RowBox[{"ListLinePlot", "[", 
-   RowBox[{"ka10pow3", "+", "ka10pow6", "-", "ka10pow9"}], "]"}]}]], "Input",
- CellChangeTimes->{{3.685231049002708*^9, 3.685231140093416*^9}}],
+   RowBox[{
+    RowBox[{"ka10pow3", "+", "ka10pow6", "-", "ka10pow9"}], ",", 
+    RowBox[{"AxesLabel", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"\"\<ln[x]\>\"", ",", "\"\<Xbar\>\""}], "}"}]}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.685231049002708*^9, 3.685231140093416*^9}, {
+  3.685235186565692*^9, 3.6852352054192944`*^9}}],
 
 Cell[BoxData[
  GraphicsBox[{{}, {{}, {}, 
@@ -556,7 +562,9 @@ MlDfLsJL1bkd97Lvw/8BmlSToQ==
       "]]}}, {}, {}, {{}, {}}},
   AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
   Axes->{True, True},
-  AxesLabel->{None, None},
+  AxesLabel->{
+    FormBox["\"ln[x]\"", TraditionalForm], 
+    FormBox["\"Xbar\"", TraditionalForm]},
   AxesOrigin->{0, 0},
   DisplayFunction->Identity,
   Frame->{{False, False}, {False, False}},
@@ -585,10 +593,11 @@ MlDfLsJL1bkd97Lvw/8BmlSToQ==
      Scaled[0.05]}},
   Ticks->{Automatic, Automatic}]], "Output",
  CellChangeTimes->{{3.685231064525029*^9, 3.685231086415381*^9}, {
-  3.685231129711838*^9, 3.6852311404838543`*^9}}]
+  3.685231129711838*^9, 3.6852311404838543`*^9}, {3.685235207835896*^9, 
+  3.685235228794484*^9}}]
 }, Open  ]]
 },
-WindowSize->{808, 591},
+WindowSize->{1053, 679},
 WindowMargins->{{4, Automatic}, {Automatic, 4}},
 Magnification:>1.5 Inherited,
 FrontEndVersion->"11.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
@@ -610,8 +619,8 @@ Cell[558, 20, 284, 10, 48, "Input"],
 Cell[845, 32, 298, 10, 48, "Input"],
 Cell[1146, 44, 1198, 39, 111, "Input"],
 Cell[CellGroupData[{
-Cell[2369, 87, 465, 12, 80, "Input"],
-Cell[2837, 101, 28910, 486, 386, "Output"]
+Cell[2369, 87, 660, 18, 80, "Input"],
+Cell[3032, 107, 29034, 489, 353, "Output"]
 }, Open  ]]
 }
 ]
