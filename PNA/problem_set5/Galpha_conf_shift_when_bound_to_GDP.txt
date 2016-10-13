@@ -1,5 +1,7 @@
 load 1got.pdb, GDP, 1
+color palegreen, GDP
 load 1tnd.pdb, GTP, 1
+color palladium, GTP
 
 #clean
 hide lines
@@ -16,13 +18,31 @@ hide cartoon, GTP and chain B
 hide sticks, GTP and chain B
 hide cartoon, GTP and chain C
 hide sticks, GTP and chain C
+select resn MG
+hide everything, sele
+delete sele
 
-align GDP, GTP and chain A
+#align
+align GDP and resn GDP, GTP and resn GSP
+
+#show regions of interest
+#loop region
+select GDP_loop, resi 172-181 and GDP and chain A
+color green, GDP_loop
+select GTP_loop, resi 172-181 and GTP and chain A
+color cyan, GTP_loop
+#helix region
+select GDP_helix, resi 204-211 and GDP and chain A
+color green, GDP_helix
+select GTP_helix, resi 201-210 and GTP and chain A
+color cyan, GTP_helix
+deselect
+bg_color white
 
 set_view (\
-     0.112793393,   -0.776650906,   -0.619748890,\
-     0.968828559,    0.224417284,   -0.104911745,\
-     0.220562428,   -0.588597655,    0.777756810,\
-    -0.000089625,   -0.000132434, -122.936683655,\
-    11.847476959,   82.537063599,   47.875045776,\
-    60.306861877,  185.530502319,  -20.000000000 )
+     0.821001410,   -0.052681617,   -0.568487406,\
+     0.425943822,    0.719551325,    0.548465788,\
+     0.380162060,   -0.692434847,    0.613194883,\
+    -0.000338191,   -0.000148460,  -83.388984680,\
+     9.225345612,   84.999801636,   41.323814392,\
+     0.408173084,  166.370986938,  -20.000000000 )
