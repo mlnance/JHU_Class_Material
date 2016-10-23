@@ -73,43 +73,46 @@ except:
     print "\nI had an issue with opening your file ( %s )\n" %pdb_filename
     sys.exit()
 
-# iterate through each ATOM line
-FASTA_ss = []  # holds the secondary structure code for each residue
-FASTA_aa = []  # holds the amino acide single-letter code for each residue
 
 # first get all of the ATOM lines
 ATOM_lines = []
 [ ATOM_lines.append( line ) for line in pdb_file if line.startswith( "ATOM" ) ]
 
 # then break up the atom lines into a dictionary based on residue number
-uniq_name_to_num = {}
 residue_lines = {}
-ii = -1
+num_to_uniq_res_name = {}
+ii = -1  # first residue in pdb file will get number 0
 for line in ATOM_lines:
-    uniq_res_name = '_'.join( [ line[21:22], # residue chain
-                                line[22:26].strip() ] ) # residue number
+    try:
+        uniq_res_name = '_'.join( [ AA_name3_to_name1[ line[17:20] ], # single-letter residue name
+                                    line[21:22], # residue chain
+                                    line[22:26].strip() ] ) # residue number
+    # skip non-canonical amino acids
+    except KeyError:
+        continue
 
     # check the current residue to the last unique residue
     # if this is a new residue, create a new entry in the dict
-    if uniq_res_name not in uniq_name_to_num.keys():
+    if uniq_res_name not in residue_lines.keys():
+        residue_lines[ uniq_res_name ] = [ line ]
         ii += 1
-        uniq_name_to_num[ uniq_res_name ] = ii
-        residue_lines[ ii ] = [ line ]
+        num_to_uniq_res_name[ ii ] = uniq_res_name
     # else, we've seen this residue just last time, so add the next atom to it
     else:
-        residue_lines[ uniq_name_to_num[ uniq_res_name ] ].append( line )
+        residue_lines[ uniq_res_name ].append( line )
 
+# get the protein length from the number of unique residues
+protein_len = len( residue_lines.keys() )
 
 # for each unique residue
-some_ii = 4
-for ii in range( 0, len( residue_lines.keys() ) ):
+H_res_nums = []  # residues to be designated as a helix
+for ii in range( protein_len ):
     # if this isn't the last three residues
-    if ii + 4 < len( residue_lines.keys() ):
+    if ii + 4 < protein_len:
         # get the current residue and the ii + 4 residue
-        res1_lines = residue_lines[ ii ]
-        res2_lines = ATOM_lines[ ii + 4 ]
+        res1_lines = residue_lines[ num_to_uniq_res_name[ ii ] ]
+        res2_lines = residue_lines[ num_to_uniq_res_name[ ii + 4 ] ]
 
-'''
         # grab the xyz coordinates of the backbone O of residue ii
         # backbone O is only the letter O
         for line in res1_lines:
@@ -125,6 +128,44 @@ for ii in range( 0, len( residue_lines.keys() ) ):
         # check the distance between all of the backbone N and O atoms
         # if less than 4A, then this is a hydrogen bond
         if calc_dist( backbone_O_xyz, backbone_N_xyz ) <= 4.0:
-            print ii
-            print calc_dist( backbone_O_xyz, backbone_N_xyz )
-'''
+            # residue ii and ii + 4 should have an 'H' designation
+            if ii not in H_res_nums:
+                H_res_nums.append( ii )
+            if ii + 4 not in H_res_nums:
+                H_res_nums.append( ii + 4 )
+
+# for each unique residue name, pull out the single-letter amino acid code and give it an 'H' or '-' designation
+# holds the amino acide single-letter code for each residue
+# my unique name was <res name>_<res chain>_<res num>
+FASTA_aa = [ num_to_uniq_res_name[ ii ].split( '_' )[0] for ii in range( protein_len ) ]
+# holds the secondary structure code for each residue
+FASTA_ss = []
+for ii in range( protein_len ):
+    if ii in H_res_nums:
+        FASTA_ss.append( 'H' )
+    else:
+        FASTA_ss.append( '-' )
+
+# print the FASTA secondary structure designation above the corresponding residue
+# write the same data to a file
+pdb_name = pdb_filename.split( '/' )[-1].split( ".pdb" )[0]
+FASTA_len = 60
+print pdb_name, "FASTA sequence describing alpha helical secondary structure\n"
+with open( pdb_name + ".fasta", "wb" ) as fh:
+    for ii in range( 0, protein_len, FASTA_len ):
+        if protein_len - ii < FASTA_len:
+            print ''.join( FASTA_ss[ ii : protein_len ] )
+            print ''.join( FASTA_aa[ ii : protein_len ] )
+            # write to file
+            fh.write( ''.join( FASTA_ss[ ii : protein_len ] ) )
+            fh.write( "\n" )
+            fh.write( ''.join( FASTA_aa[ ii : protein_len ] ) )
+            fh.write( "\n" )
+        else:
+            print ''.join( FASTA_ss[ ii : ii + FASTA_len ] )
+            print ''.join( FASTA_aa[ ii : ii + FASTA_len ] )
+            # write to file
+            fh.write( ''.join( FASTA_ss[ ii : ii + FASTA_len ] ) )
+            fh.write( "\n" )
+            fh.write( ''.join( FASTA_aa[ ii : ii + FASTA_len ] ) )
+            fh.write( "\n" )
