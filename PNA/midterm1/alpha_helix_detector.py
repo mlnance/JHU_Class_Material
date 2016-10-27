@@ -120,7 +120,7 @@ for ii in range( protein_len ):
                 backbone_O_xyz = get_xyz_coords( line )
                 break
 
-        # grab the xyz coordinates of the backbone N of residue ii
+        # grab the xyz coordinates of the backbone N of residue ii + 4
         # backbone N is only the letter N
         for line in res2_lines:
             if get_atom_name( line ) == 'N':
