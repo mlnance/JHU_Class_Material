@@ -118,12 +118,14 @@ for ii in range( protein_len ):
         for line in res1_lines:
             if get_atom_name( line ) == 'O':
                 backbone_O_xyz = get_xyz_coords( line )
+                break
 
         # grab the xyz coordinates of the backbone N of residue ii
         # backbone N is only the letter N
         for line in res2_lines:
             if get_atom_name( line ) == 'N':
                 backbone_N_xyz = get_xyz_coords( line )
+                break
 
         # check the distance between all of the backbone N and O atoms
         # if less than 4A, then this is a hydrogen bond
