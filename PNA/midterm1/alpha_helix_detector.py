@@ -149,7 +149,7 @@ for ii in range( protein_len ):
 # print the FASTA secondary structure designation above the corresponding residue
 # write the same data to a file
 pdb_name = pdb_filename.split( '/' )[-1].split( ".pdb" )[0]
-FASTA_len = 60
+FASTA_len = 80
 print pdb_name, "FASTA sequence describing alpha helical secondary structure\n"
 with open( pdb_name + ".fasta", "wb" ) as fh:
     for ii in range( 0, protein_len, FASTA_len ):
