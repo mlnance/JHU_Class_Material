@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    218192,       4976]
-NotebookOptionsPosition[    214095,       4846]
-NotebookOutlinePosition[    214482,       4863]
-CellTagsIndexPosition[    214439,       4860]
+NotebookDataLength[    218575,       4986]
+NotebookOptionsPosition[    214436,       4855]
+NotebookOutlinePosition[    214823,       4872]
+CellTagsIndexPosition[    214780,       4869]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -4840,7 +4840,16 @@ Cell[BoxData[
   SequenceForm["dG for B is about ", 9.799310167023497],
   Editable->False]], "Print",
  CellChangeTimes->{{3.687379652192634*^9, 3.687379690545113*^9}}]
-}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Protein", " ", "B", " ", "is", " ", "more", " ", "stable", " ", "than", 
+    " ", "A", " ", "by", " ", "about", " ", "2.5", " ", 
+    RowBox[{"kcal", "/", "mol"}]}], "*)"}]}]], "Input",
+ CellChangeTimes->{{3.6873797347627983`*^9, 3.687379747115211*^9}}]
 }, Open  ]]
 }, Open  ]]
 },
@@ -4975,7 +4984,8 @@ Cell[CellGroupData[{
 Cell[207982, 4708, 1658, 41, 455, "Input"],
 Cell[209643, 4751, 4134, 82, 471, "Output"],
 Cell[213780, 4835, 275, 6, 47, "Print"]
-}, Open  ]]
+}, Open  ]],
+Cell[214070, 4844, 338, 7, 105, "Input"]
 }, Open  ]]
 }, Open  ]]
 }
