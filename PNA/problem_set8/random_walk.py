@@ -19,6 +19,7 @@ nsteps = 0
 tensteps_velocities = []
 hundredsteps_velocities = []
 while abs( location ) < 100:
+    # move a step and count it
     location += choice( steps )
     nsteps += 1
     # calculating velcoity every 10 steps
@@ -40,6 +41,7 @@ nsteps = 0
 tensteps_velocities = []
 hundredsteps_velocities = []
 while abs( location ) < 1000:
+    # move a step and count it
     location += choice( steps )
     nsteps += 1
     # calculating velcoity every 10 steps
