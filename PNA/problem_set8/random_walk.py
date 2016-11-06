@@ -24,14 +24,14 @@ while abs( location ) < 100:
     nsteps += 1
     # calculating velcoity every 10 steps
     if nsteps % 10 == 0:
-        tensteps_velocities.append( float( abs( location ) ) / ( nsteps * ( 10**-3 ) ) )
+        tensteps_velocities.append( float( abs( location ) ) / nsteps )
     # calculating velcoity every 100 steps
     if nsteps % 100 == 0:
-        hundredsteps_velocities.append( float( abs( location ) ) / ( nsteps * ( 10**-3 ) ) )
+        hundredsteps_velocities.append( float( abs( location ) ) / nsteps )
 print "\n### 100 steps away"
-print "It took %s milliseconds to randomly walk 100 steps in one direction" %( nsteps * ( 10**-3 ) )
-print "   The average velocity using 10-step measurements was %s steps/msec" %round( ( sum( tensteps_velocities ) / len( tensteps_velocities ) ), 3 )
-print "   The average velocity using 100-step measurements was %s steps/msec\n" %round( ( sum( hundredsteps_velocities ) / len( hundredsteps_velocities ) ), 3 )
+print "It took %s milliseconds to randomly walk 100 steps in one direction" %nsteps
+print "   The average velocity using 10-step measurements was %s steps/msec" %round( ( sum( tensteps_velocities ) / len( tensteps_velocities ) ), 5 )
+print "   The average velocity using 100-step measurements was %s steps/msec\n" %round( ( sum( hundredsteps_velocities ) / len( hundredsteps_velocities ) ), 5 )
 
 
 
@@ -46,11 +46,11 @@ while abs( location ) < 1000:
     nsteps += 1
     # calculating velcoity every 10 steps
     if nsteps % 10 == 0:
-        tensteps_velocities.append( float( abs( location ) ) / ( nsteps * ( 10**-3 ) ) )
+        tensteps_velocities.append( float( abs( location ) ) / nsteps )
     # calculating velcoity every 100 steps
     if nsteps % 100 == 0:
-        hundredsteps_velocities.append( float( abs( location ) ) / ( nsteps * ( 10**-3 ) ) )
+        hundredsteps_velocities.append( float( abs( location ) ) / nsteps )
 print "### 1000 steps away"
-print "It took %s milliseconds to randomly walk 1000 steps in one direction" %( nsteps * ( 10**-3 ) )
-print "   The average velocity using 10-step measurements was %s steps/msec" %round( ( sum( tensteps_velocities ) / len( tensteps_velocities ) ), 3 )
-print "   The average velocity using 100-step measurements was %s steps/msec\n" %round( ( sum( hundredsteps_velocities ) / len( hundredsteps_velocities ) ), 3 )
+print "It took %s milliseconds to randomly walk 1000 steps in one direction" %nsteps
+print "   The average velocity using 10-step measurements was %s steps/msec" %round( ( sum( tensteps_velocities ) / len( tensteps_velocities ) ), 5 )
+print "   The average velocity using 100-step measurements was %s steps/msec\n" %round( ( sum( hundredsteps_velocities ) / len( hundredsteps_velocities ) ), 5 )
