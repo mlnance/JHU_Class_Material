@@ -118,7 +118,7 @@ with open( pml_filename, "wb" ) as fh:
     fh.write( "group polar_contacts, polar*\n" )
     fh.write( "show sticks, resn DG3\n" )
     fh.write( "color magenta, vdw_contacts\n" )
-    fh.write( "color white, polar_contacts\n" )
+    fh.write( "color yellow, polar_contacts\n" )
     fh.write( "hide labels\n" )
     fh.write( "show spheres, resn MG\n" )
     fh.write( "set sphere_scale, 0.4\n" )
@@ -132,4 +132,4 @@ with open( pml_filename, "wb" ) as fh:
     41.054149628,   61.524391174,  -20.000000000 )" )
 print "\nDumped '1t7p_interactions.pml' in your working directory. Run with @1t7p_interactions.pml in pymol"
 print "Van der Waals contacts are colored in magenta"
-print "H-bond/electrostatic contacts are colored in white\n"
+print "H-bond/electrostatic contacts are colored in yellow\n"

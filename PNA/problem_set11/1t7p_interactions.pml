@@ -39,7 +39,7 @@ group vdw_contacts, vdw*
 group polar_contacts, polar*
 show sticks, resn DG3
 color magenta, vdw_contacts
-color white, polar_contacts
+color yellow, polar_contacts
 hide labels
 show spheres, resn MG
 set sphere_scale, 0.4
