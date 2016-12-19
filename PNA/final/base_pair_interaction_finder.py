@@ -87,10 +87,11 @@ for uniq_name1 in residue_dict:
                 if int( uniq_name1.split( '_' )[0] ) != int( uniq_name2.split( '_' )[0] ) - 1:
                     # check only particular elements depending on residue type
                     atom1_lines = residue_dict[ uniq_name1 ]
-                    atom2_lines = residue_dict[ uniq_name2 ]                    
+                    atom2_lines = residue_dict[ uniq_name2 ]
                     for atom1 in atom1_lines:
                         res_type1 = atom1[17:20].strip()
                         atom_type1 = atom1[12:16].strip()
+                        res_num1 = atom1[22:26].strip()
                         if ( res_type1 == 'G' and atom_type1 in G_atom_types ) \
                                 or ( res_type1 == 'C' and atom_type1 in C_atom_types ) \
                                 or ( res_type1 == 'A' and atom_type1 in A_atom_types ) \
@@ -98,11 +99,15 @@ for uniq_name1 in residue_dict:
                             for atom2 in atom2_lines:
                                 res_type2 = atom2[17:20].strip()
                                 atom_type2 = atom2[12:16].strip()
+                                res_num2 = atom2[22:26].strip()
                                 if ( res_type2 == 'G' and atom_type2 in G_atom_types ) \
                                         or ( res_type2 == 'C' and atom_type2 in C_atom_types ) \
                                         or ( res_type2 == 'A' and atom_type2 in A_atom_types ) \
                                         or ( res_type2 == 'U' and atom_type2 in U_atom_types ):
                                     if calc_dist( get_xyz_coords( atom1 ), get_xyz_coords( atom2 ) ) <= 3.0:
+                                        # for use in checking in pymol
+                                        #print "dist /1z43//A/%s`%s/%s, /1z43//A/%s`%s/%s" %( res_type1, res_num1, atom_type1, res_type2, res_num2, atom_type2 )
+
                                         uniq_interaction = uniq_name1 + '+' + uniq_name2
                                         rev_uniq_interaction = uniq_name2 + '+' + uniq_name1
                                         if uniq_interaction not in uniq_interactions:
