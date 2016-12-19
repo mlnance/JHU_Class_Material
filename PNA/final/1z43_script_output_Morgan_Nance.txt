@@ -1,0 +1,86 @@
+
+Base pair interactions for 1z43.pdb
+
+C 141 H-bonds to G 237 Watson-Crick
+C 141 H-bonds to G 238 Watson-Crick
+G 142 H-bonds to C 236 Watson-Crick
+C 144 H-bonds to G 234 Watson-Crick
+G 145 H-bonds to U 185 non Watson-Crick
+G 145 H-bonds to C 233 Watson-Crick
+G 146 H-bonds to A 232 non Watson-Crick
+G 146 H-bonds to C 233 Watson-Crick
+G 148 H-bonds to C 182 Watson-Crick
+G 149 H-bonds to C 181 Watson-Crick
+G 150 H-bonds to C 180 Watson-Crick
+G 152 H-bonds to C 179 Watson-Crick
+G 154 H-bonds to U 175 non Watson-Crick
+C 155 H-bonds to G 174 Watson-Crick
+A 156 H-bonds to U 173 Watson-Crick
+U 157 H-bonds to U 173 non Watson-Crick
+C 158 H-bonds to G 171 Watson-Crick
+U 159 H-bonds to A 170 Watson-Crick
+U 159 H-bonds to G 171 non Watson-Crick
+C 161 H-bonds to G 168 Watson-Crick
+G 168 H-bonds to C 161 Watson-Crick
+A 170 H-bonds to U 159 Watson-Crick
+G 171 H-bonds to C 158 Watson-Crick
+G 171 H-bonds to U 159 non Watson-Crick
+U 173 H-bonds to A 156 Watson-Crick
+U 173 H-bonds to U 157 non Watson-Crick
+G 174 H-bonds to C 155 Watson-Crick
+U 175 H-bonds to G 154 non Watson-Crick
+C 179 H-bonds to G 152 Watson-Crick
+C 180 H-bonds to G 150 Watson-Crick
+C 181 H-bonds to G 149 Watson-Crick
+C 182 H-bonds to G 148 Watson-Crick
+U 185 H-bonds to G 145 non Watson-Crick
+C 187 H-bonds to G 231 Watson-Crick
+U 189 H-bonds to A 229 Watson-Crick
+U 189 H-bonds to G 230 non Watson-Crick
+G 190 H-bonds to C 228 Watson-Crick
+C 191 H-bonds to G 227 Watson-Crick
+C 192 H-bonds to G 226 Watson-Crick
+C 192 H-bonds to G 227 Watson-Crick
+G 193 H-bonds to A 225 non Watson-Crick
+A 194 H-bonds to U 224 Watson-Crick
+A 195 H-bonds to C 198 non Watson-Crick
+C 198 H-bonds to A 195 non Watson-Crick
+C 198 H-bonds to G 223 Watson-Crick
+C 199 H-bonds to G 222 Watson-Crick
+G 200 H-bonds to C 221 Watson-Crick
+C 201 H-bonds to A 220 non Watson-Crick
+C 202 H-bonds to A 219 non Watson-Crick
+C 202 H-bonds to A 220 non Watson-Crick
+A 203 H-bonds to C 218 non Watson-Crick
+G 204 H-bonds to G 217 non Watson-Crick
+C 206 H-bonds to G 215 Watson-Crick
+C 207 H-bonds to G 214 Watson-Crick
+C 208 H-bonds to G 213 Watson-Crick
+G 213 H-bonds to C 208 Watson-Crick
+G 214 H-bonds to C 207 Watson-Crick
+G 215 H-bonds to C 206 Watson-Crick
+G 217 H-bonds to G 204 non Watson-Crick
+C 218 H-bonds to A 203 non Watson-Crick
+A 219 H-bonds to C 202 non Watson-Crick
+A 220 H-bonds to C 201 non Watson-Crick
+A 220 H-bonds to C 202 non Watson-Crick
+C 221 H-bonds to G 200 Watson-Crick
+G 222 H-bonds to C 199 Watson-Crick
+G 223 H-bonds to C 198 Watson-Crick
+U 224 H-bonds to A 194 Watson-Crick
+A 225 H-bonds to G 193 non Watson-Crick
+G 226 H-bonds to C 192 Watson-Crick
+G 227 H-bonds to C 191 Watson-Crick
+G 227 H-bonds to C 192 Watson-Crick
+C 228 H-bonds to G 190 Watson-Crick
+A 229 H-bonds to U 189 Watson-Crick
+G 230 H-bonds to U 189 non Watson-Crick
+G 231 H-bonds to C 187 Watson-Crick
+A 232 H-bonds to G 146 non Watson-Crick
+C 233 H-bonds to G 145 Watson-Crick
+C 233 H-bonds to G 146 Watson-Crick
+G 234 H-bonds to C 144 Watson-Crick
+C 236 H-bonds to G 142 Watson-Crick
+G 237 H-bonds to C 141 Watson-Crick
+G 238 H-bonds to C 141 Watson-Crick
+
