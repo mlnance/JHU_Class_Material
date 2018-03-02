@@ -130,22 +130,28 @@ def accept_move(pose_current, pose_new):
 
 # store the lowest energy pose seen for each independent trajectory
 lowE_ala_poses_seen = []
+lowE_gly_poses_seen = []
 
 for ii in range(n_trajectories):
     # get a fresh copy of the pose
     ala_pose = ala_pose_fresh.clone()
+    gly_pose = gly_pose_fresh.clone()
     # for keeping track of the lowest-E pose seen each trajectory
     lowE_ala_pose = ala_pose_fresh.clone()
+    lowE_gly_pose = gly_pose_fresh.clone()
 
     # fold
     for jj in range(n_cycles):
         # keep a copy of the pose before the move was made
         # needed for Metropolis comparison
         ala_pose_before_move = ala_pose.clone()
+        gly_pose_before_move = gly_pose.clone()
 
         # perturb the pose with a phi or psi move
         make_move(ala_pose)
+        make_move(gly_pose)
 
+        # Alanine 10-mer
         # compare the pose before the move and of after
         # Metropolis function will return the better of the two poses
         # so assign the current pose to whichever one is best
@@ -156,11 +162,21 @@ for ii in range(n_trajectories):
         else:
             # move was rejected, revert pose to before move
             ala_pose.assign( ala_pose_before_move )
-
         # update the lowE_ala_pose if needed
         # this is the lowest E pose seen during folding
         if sf(ala_pose) < sf(lowE_ala_pose):
             lowE_ala_pose.assign(ala_pose)
 
+        # Glycine 10-mer
+        if accept_move( gly_pose_before_move, gly_pose ):
+            #pmm.apply(gly_pose)
+            pass
+        else:
+            gly_pose.assign( gly_pose_before_move )
+        if sf(gly_pose) < sf(lowE_gly_pose):
+            lowE_gly_pose.assign(gly_pose)
+
     # end trajectory, store lowE_ala_pose
     lowE_ala_poses_seen.append(lowE_ala_pose)
+    # end trajectory, store lowE_gly_pose
+    lowE_gly_poses_seen.append(lowE_gly_pose)
