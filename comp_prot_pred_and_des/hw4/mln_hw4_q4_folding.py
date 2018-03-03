@@ -7,7 +7,8 @@ Workshop 4 Programming exercise 1
 Fold 10-mer alanine chain 100 separate times
 Using the full atom folding variant with vdw and hbond scoring terms
 
-Usage: python mln_hw4_q4_folding.py
+Usage: python <script.py> <ALA or GLY or 2REB>
+Example: python mln_hw4_q4_folding.py 2REB
 """
 
 
@@ -23,14 +24,35 @@ from rosetta.core.scoring import hbond_sr_bb, hbond_lr_bb, \
     fa_atr, fa_rep
 from rosetta.basic import periodic_range
 from math import exp
+import sys
+
+
+#############
+# ARGUMENTS #
+#############
+try:
+    input_arg = sys.argv[1].strip().lower()
+except IndexError:
+    print "\nDid you give me a valid argument? Try GLY, ALA, or 2REB.\n"
+    sys.exit()
+# ensure a valid argument was passed
+if input_arg not in ["gly", "ala", "2reb"]:
+    print "\nI can only do GLY, ALA, or 2REB as an argument.\n"
+    sys.exit()
 
 
 ##################
 # INITIALIZATION #
 ##################
 init()
-ala_pose_fresh = pose_from_sequence("A" * 10)
-gly_pose_fresh = pose_from_sequence("G" * 10)
+if input_arg == "ala":
+    pose_fresh = pose_from_sequence("A" * 10)
+elif input_arg == "gly":
+    pose_fresh = pose_from_sequence("G" * 10)
+else:
+    # sequence of 2REB from PDB
+    pose_fresh = pose_from_sequence("AIDENKQKALAAALGQIEKQFGKGSIMRLGEDRSMDVETISTGSLSLDIALGAGGLPMGRIVEIYGPESSGKTTLTLQVIAAAQREGKTCAFIDAEHALDPIYARKLGVDIDNLLCSQPDTGEQALEICDALARSGAVDVIVVDSVAALTPKAEIEGEIGDSHMGLAARMMSQAMRKLAGNLKQSNTLLIFINQIRMKIGVMFGNPETTTGGNALKFYASVRLDIRRIGAVKEGENVVGSETRVKVVKNKIAAPFKQAEFQILYGEGINFYGELVDLGVKEKLIEKAGAWYSYKGEKIGQGKANATAWLKDNPETAKEIEKKVRELLLSNPNSTPDFSVDDSEGVAETNEDF")
+
 fa_sf = get_fa_scorefxn()
 sf = ScoreFunction()
 pmm = PyMOLMover()
@@ -42,15 +64,20 @@ kT = 1.0
 n_trajectories = 100
 n_cycles = 100
 
-# set the scorefunction according to the workshop
-# only van der Waals (fa_atr and fa_rep) and
-# hbonds should be used. Ala and Gly make no
-# side chain hbonds, so use the bb terms
-# get the weights from the full atom score function
-sf.set_weight(fa_atr, fa_sf.get_weight(fa_atr))
-sf.set_weight(fa_rep, fa_sf.get_weight(fa_rep))
-sf.set_weight(hbond_sr_bb, fa_sf.get_weight(hbond_sr_bb))
-sf.set_weight(hbond_lr_bb, fa_sf.get_weight(hbond_lr_bb))
+# if doing ala or gly, create the appropriate sf
+if input_arg in ["gly", "ala"]:
+    # set the scorefunction according to the workshop
+    # only van der Waals (fa_atr and fa_rep) and
+    # hbonds should be used. Ala and Gly make no
+    # side chain hbonds, so use the bb terms
+    # get the weights from the full atom score function
+    sf.set_weight(fa_atr, fa_sf.get_weight(fa_atr))
+    sf.set_weight(fa_rep, fa_sf.get_weight(fa_rep))
+    sf.set_weight(hbond_sr_bb, fa_sf.get_weight(hbond_sr_bb))
+    sf.set_weight(hbond_lr_bb, fa_sf.get_weight(hbond_lr_bb))
+# otherwise, use the standard full atom sf
+else:
+    sf.assign( fa_sf.clone() )
 
 
 #############
@@ -129,54 +156,37 @@ def accept_move(pose_current, pose_new):
 
 
 # store the lowest energy pose seen for each independent trajectory
-lowE_ala_poses_seen = []
-lowE_gly_poses_seen = []
+lowE_poses_seen = []
 
 for ii in range(n_trajectories):
     # get a fresh copy of the pose
-    ala_pose = ala_pose_fresh.clone()
-    gly_pose = gly_pose_fresh.clone()
+    pose = pose_fresh.clone()
     # for keeping track of the lowest-E pose seen each trajectory
-    lowE_ala_pose = ala_pose_fresh.clone()
-    lowE_gly_pose = gly_pose_fresh.clone()
+    lowE_pose = pose_fresh.clone()
 
     # fold
     for jj in range(n_cycles):
         # keep a copy of the pose before the move was made
         # needed for Metropolis comparison
-        ala_pose_before_move = ala_pose.clone()
-        gly_pose_before_move = gly_pose.clone()
+        pose_before_move = pose.clone()
 
         # perturb the pose with a phi or psi move
-        make_move(ala_pose)
-        make_move(gly_pose)
+        make_move(pose)
 
-        # Alanine 10-mer
         # compare the pose before the move and of after
         # Metropolis function will return the better of the two poses
         # so assign the current pose to whichever one is best
-        if accept_move( ala_pose_before_move, ala_pose ):
+        if accept_move( pose_before_move, pose ):
             # move was accepted, so visualize
-            #pmm.apply(ala_pose)
+            #pmm.apply(pose)
             pass
         else:
             # move was rejected, revert pose to before move
-            ala_pose.assign( ala_pose_before_move )
-        # update the lowE_ala_pose if needed
+            pose.assign( pose_before_move )
+        # update the lowE_pose if needed
         # this is the lowest E pose seen during folding
-        if sf(ala_pose) < sf(lowE_ala_pose):
-            lowE_ala_pose.assign(ala_pose)
+        if sf(pose) < sf(lowE_pose):
+            lowE_pose.assign(pose)
 
-        # Glycine 10-mer
-        if accept_move( gly_pose_before_move, gly_pose ):
-            #pmm.apply(gly_pose)
-            pass
-        else:
-            gly_pose.assign( gly_pose_before_move )
-        if sf(gly_pose) < sf(lowE_gly_pose):
-            lowE_gly_pose.assign(gly_pose)
-
-    # end trajectory, store lowE_ala_pose
-    lowE_ala_poses_seen.append(lowE_ala_pose)
-    # end trajectory, store lowE_gly_pose
-    lowE_gly_poses_seen.append(lowE_gly_pose)
+    # end trajectory, store lowE_pose
+    lowE_poses_seen.append(lowE_pose)
