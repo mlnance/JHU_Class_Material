@@ -33,7 +33,8 @@ import sys
 try:
     input_arg = sys.argv[1].strip().lower()
 except IndexError:
-    print "\nDid you give me a valid argument? Try GLY, ALA, or 2REB.\n"
+    print "\nTell me what sequence you want to fold."
+    print "Try typing 'gly', 'ala', or '2reb'\n"
     sys.exit()
 # ensure a valid argument was passed
 if input_arg not in ["gly", "ala", "2reb"]:
@@ -158,6 +159,7 @@ def accept_move(pose_current, pose_new):
 # store the lowest energy pose seen for each independent trajectory
 lowE_poses_seen = []
 
+print "\n\nFolding, please wait..."
 for ii in range(n_trajectories):
     # get a fresh copy of the pose
     pose = pose_fresh.clone()
