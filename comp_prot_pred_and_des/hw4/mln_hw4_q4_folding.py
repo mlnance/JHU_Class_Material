@@ -3,9 +3,12 @@ __author__="morganlnance"
 
 """
 Morgan Nance Homework 4 Question 4
-Workshop 4 Programming exercise 1
-Fold 10-mer alanine chain 100 separate times
-Using the full atom folding variant with vdw and hbond scoring terms
+Workshop 4 Programming exercise 1 and 2
+Fold 10-mer alanine or glycine chain 100 separate times
+Or fold 2REB from sequence with same folding algorithm
+Using the full atom folding variant with vdw and hbond scoring terms for Ala and Gly
+Using the full atom score function for 2REB
+Produces 100 decoys taking the lowest energy pose seen during each trajectory
 
 Usage: python <script.py> <ALA or GLY or 2REB>
 Example: python mln_hw4_q4_folding.py 2REB
