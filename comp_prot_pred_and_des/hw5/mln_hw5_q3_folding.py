@@ -150,6 +150,9 @@ for ii in range(2 * pose.size()):
         n_small_and_shear_accepts += 1
         pmm.apply(pose)
 
+# apply the lowest score pose
+pmm.apply(mc.lowest_score_pose())
+        
 # end timing
 end = time()
 print "\n\nFolding simulation took %s seconds" %round((end - start),3)
