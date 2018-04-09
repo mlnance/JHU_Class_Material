@@ -66,8 +66,8 @@ pmm.keep_history(True)
 # declarations from workshop and homework
 angle_deviation = 25.0
 kT = 1.0
-nstruct = 100
-n_cycles = 100
+nstruct = 10
+n_cycles = 1000
 
 # if doing ala or gly, create the appropriate sf
 if input_arg in ["gly", "ala"]:
@@ -172,6 +172,7 @@ while not jd.job_complete:
     print "\n\nFolding, please wait..."
     # get a fresh copy of the pose
     pose = pose_fresh.clone()
+    pose.pdb_info().name(jd.current_name)
     # for keeping track of the lowest-E pose seen each trajectory
     lowE_pose = pose_fresh.clone()
 
