@@ -35,7 +35,9 @@ import sys
 # ARGUMENTS #
 #############
 try:
-    input_arg = sys.argv[1].strip().lower()
+    # hardcoded
+    input_arg = "ala"
+    #input_arg = sys.argv[1].strip().lower()
 except IndexError:
     print "\nTell me what sequence you want to fold."
     print "Try typing 'gly', 'ala', or '2reb'\n"
@@ -66,8 +68,8 @@ pmm.keep_history(True)
 # declarations from workshop and homework
 angle_deviation = 25.0
 kT = 1.0
-nstruct = 10
-n_cycles = 1000
+nstruct = 100
+n_cycles = 10000
 
 # if doing ala or gly, create the appropriate sf
 if input_arg in ["gly", "ala"]:
