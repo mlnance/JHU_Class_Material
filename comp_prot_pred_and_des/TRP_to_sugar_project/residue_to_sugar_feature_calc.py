@@ -8,6 +8,10 @@ maybe make all dicts in the beginning before for loop and then add to them conti
 store pdb name in the df too
 clarify intent of getting atom names and stuff
 clarify why I am using an atom id
+edit so that no multi-occupancy counting occurs (ensure blank or A)
+three TRP atoms to 1 sugar atom doesn't really capture planarity though
+look at 1tfv as an example
+how to check planarity between trp and sugar?
 '''
 
 
@@ -26,7 +30,8 @@ from dihedral_angle import calc_dihedral_angle
 # DEFINITIONS #
 ###############
 sugar_residue_names = ["BGC", "GLC", "BMA",
-                       "MAN", "GAL", "NAG"]
+                       "MAN", "GAL", "NAG",
+                       "Glc"]
 # pyranose rings have 5 carbons in the ring
 sugar_ring_atoms = ["C1", "C2", "C3", "C4", "C5"]
 # for pruning which TRP to sugar CH atom contacts to keep
@@ -91,17 +96,21 @@ for pdb_file in pdb_files:
         continue
     # get the name of the PDB file
     # example: /path/to/file/1abc.pdb.gz ---> 1abc
-    pdb_name = pdb_file.split("/")[-1].split(".")[0]
+    # example: /path/to/file/1abc_long_rosetta_suffix.pdb ---> 1abc
+    pdb_name = pdb_file.split("/")[-1].split(".")[0].split("_")[0]
 
-    # pull out desired lines
+    # pull out desired ATOM and HETATM lines
+    # ***** IMPORTANT NOTE *****
+    # if it's a regular PDB file, sugar residues will be a HETATM
+    # if it's a Rosetta PDB file, sugar residues will be an ATOM
     atom_lines = [l for l in pdb_lines
-                  if l.startswith("ATOM")]
-    hetatm_lines = [l for l in pdb_lines
-                    if l.startswith("HETATM")
-                    and "HOH" not in l]
+                  if l.startswith("ATOM")
+                  or l.startswith("HETATM") and l[17:20].strip() != "HOH"]
+    # pull out just the TRP residue lines for quicker parsing later
     trp_lines = [l for l in atom_lines
-                 if "TRP" in l]
-    # delete the pdb_lines now
+                 if l[17:20].strip() == "TRP"]
+    # delete the pdb_lines now as we don't need all of them
+    # and might as well free up some space
     del(pdb_lines)
 
 
@@ -163,7 +172,7 @@ for pdb_file in pdb_files:
     # build a sugar dictionary for each residue's lines
     # key: PDBname_SUGARresname_resnum_chain, value: [lines]
     sugar_dict = {}
-    for sugar_line in hetatm_lines:
+    for sugar_line in atom_lines:
         # check that this residue is in the defined set of sugar residues
         resname = sugar_line[17:20].strip()
         if resname not in sugar_residue_names:
