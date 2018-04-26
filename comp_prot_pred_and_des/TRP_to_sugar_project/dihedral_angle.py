@@ -1,5 +1,9 @@
 #!/usr/bin/python
-__website__="http://azevedolab.net/resources/dihedral_angle.pdf"
+
+"""
+Code taken from
+http://azevedolab.net/resources/dihedral_angle.pdf
+"""
 
 
 def initial_vectors(p1_in, p2_in, p3_in, p4_in):
@@ -67,8 +71,9 @@ def dihedral_angle(n1,u1,u2,u3):
     theta = -math.atan2(sin_theta,cos_theta) # it is different from Fortran math.atan2(y,x)
     theta_deg = np.degrees(theta)
     # Show results
-    print("theta (rad) = %8.3f"%theta)
-    print("theta (deg) = %8.3f"%theta_deg)
+    #print("theta (rad) = %8.3f"%theta)
+    #print("theta (deg) = %8.3f"%theta_deg)
+    return theta_deg
 
 
 
@@ -88,7 +93,7 @@ def calc_dihedral_angle(p1_in, p2_in, p3_in, p4_in):
     # Call calc_orthogonal_unit_vectors(n2,q2) function
     u1,u2,u3 = calc_orthogonal_unit_vectors(n2,q2)
     # Call calc_dihedral_angle(u1,u2,u3) function
-    dihedral_angle(n1,u1,u2,u3)
+    return dihedral_angle(n1,u1,u2,u3)
 
 
 #if __name__ == "__main__":

@@ -1,8 +1,11 @@
 #!/usr/bin/python
-__author__ = "morganlnance"
 
 
 '''
+TODO: make this work on a directory of pdb structs and write to one df
+have to change how data gets added to df? dictionaries are instantiated when needed
+maybe make all dicts in the beginning before for loop and then add to them continuously
+store pdb name in the df too
 '''
 
 
@@ -11,6 +14,7 @@ __author__ = "morganlnance"
 ###########
 import sys
 from math import sqrt
+import pandas as pd
 from dihedral_angle import calc_dihedral_angle
 
 
@@ -22,7 +26,7 @@ sugar_residue_names = ["BGC", "GLC", "BMA",
 # pyranose rings have 5 carbons in the ring
 sugar_ring_atoms = ["C1", "C2", "C3", "C4", "C5"]
 # for pruning which TRP to sugar CH atom contacts to keep
-# based on distance
+# based on distance in Angstroms
 trp_to_sugar_ch_cutoff = 6
 
 
@@ -34,6 +38,13 @@ try:
 except IndexError:
     print "\n\nPlease give me a .pdb file\n"
     sys.exit()
+
+
+'''
+if the input is a pdb file, put it into a list
+if the input is a directory, put all .pdb files into a list
+have to then put everything below into a for loop, requiring one tab over
+'''
 
 
 #############
@@ -139,6 +150,10 @@ for sugar_line in hetatm_lines:
 # key: TRPresnum_chain+SUGARresnum_chain_atomname, value: distance
 # example: 127_A+310_A_C3 : 5.2
 all_trp_midpt_to_sugar_ch_dict = {}
+# need to also keep track of the xyz coordinates of the CH atom
+# that is the closest to the TRP midpoint atom
+# key: SUGARresnum_chain_atomname, value: [x, y, z] of CH atom
+all_sugar_ch_atom_xyz_dict = {}
 # for each tryptophan, calc distances to each sugar CH
 # then determine which one is the minimum
 for trp_id, trp_midpt in trp_cd2_ce2_midpoints.iteritems():
@@ -169,6 +184,11 @@ for trp_id, trp_midpt in trp_cd2_ce2_midpoints.iteritems():
                 # add the midpoint to CH distance to the list
                 # for this current TRP's midpoint
                 midpt_to_ch_atom_dists[sugar_atom_id] = dist
+                # add the sugar CH atom xyz coords to the dict
+                all_sugar_ch_atom_xyz_dict[sugar_atom_id] = [ch_x,
+                                                             ch_y,
+                                                             ch_z]
+                
 
     # done checking all sugar CH atoms for this specific midpoint
     # determine which distance is the minimum
@@ -190,7 +210,7 @@ for trp_id, trp_midpt in trp_cd2_ce2_midpoints.iteritems():
     all_trp_midpt_to_sugar_ch_dict[trp_to_sugar_atom_id] = min_dist
 
 # we collected all the minimum TRP midpoints to sugar CH atom
-# ie) each TRP in the prot must have some minimum distance
+# ie) each TRP in the protein must have some minimum distance
 # to some sugar CH atom in the protein. that distance could be
 # large though. So go through the dictionary and prune out
 # TRP to sugar CH distances below some cutoff distance
@@ -202,8 +222,152 @@ trp_midpt_to_sugar_ch_dict = { trp_to_sugar_atom_id:
                                for trp_to_sugar_atom_id, min_dist 
                                in all_trp_midpt_to_sugar_ch_dict.iteritems()
                                if min_dist < trp_to_sugar_ch_cutoff }
+# with the pruned TRP midpoint data, we can figure out which CH atom was closest
+# and prune a dictionary of sugar CH atoms to their xyz coords for later use
+# trp_to_sugar_atom_id looks like: TRPresnum_chain+SUGARresnum_chain_atomname
+# so split on the "+" and pull out the sugar id to get its xyz coords
+sugar_ch_atom_xyz_dict = { trp_to_sugar_atom_id.split("+")[-1]:
+                               all_sugar_ch_atom_xyz_dict[trp_to_sugar_atom_id.split("+")[-1]]
+                           for trp_to_sugar_atom_id
+                           in trp_midpt_to_sugar_ch_dict.keys() }
 
 
-#############################################
-# CALCULATE DIHEDRAL BETWEEN NE1 CE2 CD2 CH #
-#############################################
+#######################################################
+# CALCULATE DIHEDRAL BETWEEN TRP NE1 CE2 CD2 SUGAR CH #
+#######################################################
+# for each TRP residue that has a relevant dihedral to calculate
+# pull out the TRP residue from the trp_dict, get the relevant atoms
+# and then pull out the corresponding sugar CH atom from the
+# sugar_ch_atom_xyz_dict dictionary
+# key: TRPresnum_chain+SUGARresnum_chain_atomname, value: NE1-CE2-CD2-CH dihedral
+trp_to_sugar_ch_dihedral_dict = {}
+for trp_to_sugar_atom_id in trp_midpt_to_sugar_ch_dict.keys():
+    # pull out the TRPresnum_chain id
+    trp_resnum_chain = trp_to_sugar_atom_id.split("+")[0]
+    # pull out the sugar CH atom id too
+    sugar_atom_id = trp_to_sugar_atom_id.split("+")[-1]
+
+    # grab the TRP residue lines given the trp_resnum_chain
+    trp_res_lines = trp_dict[trp_resnum_chain]
+    # pull out the NE1 CE2 and CD2 atom coordinates
+    # start them out as None in case for some reason the TRP
+    # residue doesn't have these atoms and we can't calculate the dihedral
+    trp_NE1_xyz = None
+    trp_CE2_xyz = None
+    trp_CD2_xyz = None
+    for trp_line in trp_res_lines:
+        if trp_line[12:16].strip() == "NE1":
+            trp_NE1_xyz = [float(trp_line[30:38].strip()),
+                           float(trp_line[38:46].strip()),
+                           float(trp_line[46:54].strip())]
+        if trp_line[12:16].strip() == "CE2":
+            trp_CE2_xyz = [float(trp_line[30:38].strip()),
+                           float(trp_line[38:46].strip()),
+                           float(trp_line[46:54].strip())]
+        if trp_line[12:16].strip() == "CD2":
+            trp_CD2_xyz = [float(trp_line[30:38].strip()),
+                           float(trp_line[38:46].strip()),
+                           float(trp_line[46:54].strip())]
+
+    # grab the xyz coordinates of the relevant sugar CH atom
+    # that is closest to this TRP's midpt atom
+    sugar_ch_atom_xyz = sugar_ch_atom_xyz_dict[sugar_atom_id]
+
+    # calculate the dihedral between NE1 - CE2 - CD2 - sugar CH atom
+    trp_to_sugar_dihedral = round(calc_dihedral_angle(trp_NE1_xyz,
+                                                      trp_CE2_xyz,
+                                                      trp_CD2_xyz,
+                                                      sugar_ch_atom_xyz), 3)
+    # add to the dictionary given the TRP to sugar CH id key
+    trp_to_sugar_ch_dihedral_dict[trp_to_sugar_atom_id] = trp_to_sugar_dihedral
+
+
+###############################################
+# CALCULATE DIHEDRAL BETWEEN TRP CA CB CG CD1 #
+###############################################
+# for all TRP residues that are CH-pi interacting based on the above criteria
+# calculate its chi2 value from atoms CA CB CG and CD1
+trp_chi2_dihedral_dict = {}
+for trp_to_sugar_atom_id in trp_midpt_to_sugar_ch_dict.keys():
+    # pull out the TRPresnum_chain id
+    trp_resnum_chain = trp_to_sugar_atom_id.split("+")[0]
+
+    # grab the TRP residue lines given the trp_resnum_chain
+    trp_res_lines = trp_dict[trp_resnum_chain]
+    # pull out the CA CB CG and CD1 atom coordinates
+    # start them out as None in case for some reason the TRP
+    # residue doesn't have these atoms and we can't calculate the dihedral
+    trp_CA_xyz = None
+    trp_CB_xyz = None
+    trp_CG_xyz = None
+    trp_CD1_xyz = None
+    for trp_line in trp_res_lines:
+        if trp_line[12:16].strip() == "CA":
+            trp_CA_xyz = [float(trp_line[30:38].strip()),
+                           float(trp_line[38:46].strip()),
+                           float(trp_line[46:54].strip())]
+        if trp_line[12:16].strip() == "CB":
+            trp_CB_xyz = [float(trp_line[30:38].strip()),
+                           float(trp_line[38:46].strip()),
+                           float(trp_line[46:54].strip())]
+        if trp_line[12:16].strip() == "CG":
+            trp_CG_xyz = [float(trp_line[30:38].strip()),
+                           float(trp_line[38:46].strip()),
+                           float(trp_line[46:54].strip())]
+        if trp_line[12:16].strip() == "CD1":
+            trp_CD1_xyz = [float(trp_line[30:38].strip()),
+                           float(trp_line[38:46].strip()),
+                           float(trp_line[46:54].strip())]
+
+    # calculate the dihedral between CA - CB - CG - CD1
+    trp_chi2_dihedral = round(calc_dihedral_angle(trp_CA_xyz,
+                                                  trp_CB_xyz,
+                                                  trp_CG_xyz,
+                                                  trp_CD1_xyz), 3)
+    # add to the dictionary given the TRPresnum_chain
+    trp_chi2_dihedral_dict[trp_resnum_chain] = trp_chi2_dihedral
+
+
+###################
+# DATA COLLECTION #
+###################
+# build the dataframe column by column
+df = pd.DataFrame()
+# TRP residue number and chain
+# pull from dictionary that has TRP and sugar id together
+# to ensure the order of collecting TRP and sugar ids corresponds
+# to the order that the TRP and sugar residues are actually interacting
+# key: TRPresnum_chain+SUGARresnum_chain_atomname
+trp_to_sugar_ids = trp_midpt_to_sugar_ch_dict.keys()
+trp_ids = [trp_to_sugar_id.split("+")[0] for trp_to_sugar_id in trp_to_sugar_ids]
+trp_resnums = [trp_id.split("_")[0] for trp_id in trp_ids]
+trp_chains = [trp_id.split("_")[1] for trp_id in trp_ids]
+# sugar CH residue number, chain, and CH atom name
+# sugar_id: SUGARresnum_chain_atomname
+sugar_ids = [trp_to_sugar_id.split("+")[1] for trp_to_sugar_id in trp_to_sugar_ids]
+sugar_resnums = [sugar_id.split("_")[0] for sugar_id in sugar_ids]
+sugar_chains = [sugar_id.split("_")[1] for sugar_id in sugar_ids]
+sugar_ch_atoms = [sugar_id.split("_")[2] for sugar_id in sugar_ids]
+# TRP midpoint [x, y, z] and distances to sugar CH atom
+trp_midpt_xyzs = [trp_cd2_ce2_midpoints[trp_id] for trp_id in trp_ids]
+# a little redundant, but explicit to ensure the correct order of things
+trp_midpt_to_ch_dists = [trp_midpt_to_sugar_ch_dict[trp_to_sugar_id]
+                         for trp_to_sugar_id in trp_to_sugar_ids]
+# TRP NE1 CE2 CD2 to sugar CH atom dihedrals
+# also a little redundant, but again, ensuring correct order
+trp_to_sugar_ch_dihedrals = [trp_to_sugar_ch_dihedral_dict[trp_to_sugar_id]
+                             for trp_to_sugar_id in trp_to_sugar_ids]
+# TRP chi2 dihedrals
+trp_chi2_dihedrals = [trp_chi2_dihedral_dict[trp_id] for trp_id in trp_ids]
+
+
+# add data to the dataframe
+df["TRP_resnum"] = trp_resnums
+df["TRP_chain"] = trp_chains
+df["sugar_resnum"] = sugar_resnums
+df["sugar_chain"] = sugar_chains
+df["sugar_ch_atom"] = sugar_ch_atoms
+df["TRP_midpt_xyz"] = trp_midpt_xyzs
+df["TRP_midpt_to_CH_dist"] = trp_midpt_to_ch_dists
+df["TRP_to_CH_dihedral"] = trp_to_sugar_ch_dihedrals
+df["TRP_chi2_dihedral"] = trp_chi2_dihedrals
