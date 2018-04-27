@@ -31,7 +31,8 @@ from dihedral_angle import calc_dihedral_angle
 ###############
 sugar_residue_names = ["BGC", "GLC", "BMA",
                        "MAN", "GAL", "NAG",
-                       "Glc"]
+                       "FUC",
+                       "Glc", "Man", "Fuc"]
 # pyranose rings have 5 carbons in the ring
 sugar_ring_atoms = ["C1", "C2", "C3", "C4", "C5"]
 # for pruning which TRP to sugar CH atom contacts to keep
