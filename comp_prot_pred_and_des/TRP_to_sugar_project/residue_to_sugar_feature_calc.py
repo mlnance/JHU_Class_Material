@@ -96,9 +96,10 @@ for pdb_file in pdb_files:
     else:
         continue
     # get the name of the PDB file
-    # example: /path/to/file/1abc.pdb.gz ---> 1abc
-    # example: /path/to/file/1abc_long_rosetta_suffix.pdb ---> 1abc
-    pdb_name = pdb_file.split("/")[-1].split(".")[0].split("_")[0]
+    # example: /path/to/file/1abc_long_rosetta_suffix.pdb.gz ---> 1abc
+    pdb_id = pdb_file.split("/")[-1].split(".")[0].split("_")[0]
+    # example: /path/to/file/1abc_suffix.pdb ---> 1abc_suffix
+    pdb_name = pdb_file.split("/")[-1].split(".")[0]
 
     # pull out desired ATOM and HETATM lines
     # ***** IMPORTANT NOTE *****
@@ -124,9 +125,9 @@ for pdb_file in pdb_files:
     for trp_line in trp_lines:
         # build the id for the TRP residue
         # each unique TRP should have a unique TRP id
-        resnum = trp_line[23:26].strip()
+        resnum = trp_line[22:26].strip()
         chain = trp_line[21:22]
-        trp_id = pdb_name + "_" + resnum + "_" + chain
+        trp_id = pdb_id + "_" + resnum + "_" + chain
         # if this id isn't in the dictionary
         # add the id as the key and the line to a list
         if trp_id not in trp_dict.keys():
@@ -179,9 +180,9 @@ for pdb_file in pdb_files:
         if resname not in sugar_residue_names:
             continue
         # build the id for the sugar residue
-        resnum = sugar_line[23:26].strip()
+        resnum = sugar_line[22:26].strip()
         chain = sugar_line[21:22]
-        sugar_id = pdb_name + "_" + resname + "_" + resnum + "_" + chain
+        sugar_id = pdb_id + "_" + resname + "_" + resnum + "_" + chain
         # if this id isn't in the dictionary
         # add the id as the key and the line to a list
         if sugar_id not in sugar_dict.keys():
@@ -390,8 +391,16 @@ for pdb_file in pdb_files:
     trp_to_sugar_ids = trp_midpt_to_sugar_ch_dict.keys()
     trp_ids = [trp_to_sugar_id.split("+")[0]
                for trp_to_sugar_id in trp_to_sugar_ids]
-    pdb_names = [trp_id.split("_")[0]
+    pdb_ids = [trp_id.split("_")[0]
                    for trp_id in trp_ids]
+    # a pdb_id is something like 1abc
+    # a pdb_name is something like 1abc_rosetta_suffix
+    # a pdb_id was used to differentiate different data points collected
+    # but, due to parsing (the _ specifically), the pdb_name wasn't used
+    # but the pdb_name is desired because that's the actual filename
+    # hence doing this little hack
+    pdb_names = [pdb_name
+                 for ii in range(len(pdb_ids))]
     trp_resnums = [trp_id.split("_")[1]
                    for trp_id in trp_ids]
     trp_chains = [trp_id.split("_")[2]
@@ -423,7 +432,7 @@ for pdb_file in pdb_files:
                           for trp_id in trp_ids]
 
     # all of the data lists at this point should be same length
-    # so we'll just take one of those lists, pdb_names
+    # so we'll just take one of those lists, pdb_ids
     # and use that as an iterator to then add each line of data
     # row by row to the dataframe
     # a dataframe is 0-indexed, so adding a row by doing len(df)
