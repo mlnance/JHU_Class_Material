@@ -37,7 +37,7 @@ sugar_residue_names = ["BGC", "GLC", "BMA",
 sugar_ring_atoms = ["C1", "C2", "C3", "C4", "C5"]
 # for pruning which TRP to sugar CH atom contacts to keep
 # based on distance in Angstroms
-trp_to_sugar_ch_cutoff = 6
+trp_to_sugar_ch_cutoff = 4.5
 # dataframe for data
 df_columns = ["PDB", "TRP_resnum", "TRP_chain",
               "sugar_resname", "sugar_resnum", "sugar_chain",
