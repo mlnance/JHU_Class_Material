@@ -1,0 +1,7 @@
+plt.hist(x=df.TRP_chi2_dihedral, zorder=100, color="blue", bins=range(-180,181,10))
+plt.xticks(range(-180,181,30))
+plt.xlim([-180,180])
+plt.grid( zorder=0 )
+plt.xlabel("TRP chi2 dihedral (degrees)")
+plt.ylabel("Count")
+

@@ -401,7 +401,7 @@ for pdb_file in pdb_files:
     # hence doing this little hack
     pdb_names = [pdb_name
                  for ii in range(len(pdb_ids))]
-    trp_resnums = [trp_id.split("_")[1]
+    trp_resnums = [int(trp_id.split("_")[1])
                    for trp_id in trp_ids]
     trp_chains = [trp_id.split("_")[2]
                   for trp_id in trp_ids]
@@ -411,7 +411,7 @@ for pdb_file in pdb_files:
                  for trp_to_sugar_id in trp_to_sugar_ids]
     sugar_resnames = [sugar_id.split("_")[1]
                      for sugar_id in sugar_ids]
-    sugar_resnums = [sugar_id.split("_")[2]
+    sugar_resnums = [int(sugar_id.split("_")[2])
                      for sugar_id in sugar_ids]
     sugar_chains = [sugar_id.split("_")[3]
                     for sugar_id in sugar_ids]
@@ -421,14 +421,14 @@ for pdb_file in pdb_files:
     trp_midpt_xyzs = [trp_cd2_ce2_midpoints[trp_id]
                       for trp_id in trp_ids]
     # a little redundant, but explicit to ensure the correct order of things
-    trp_midpt_to_ch_dists = [trp_midpt_to_sugar_ch_dict[trp_to_sugar_id]
+    trp_midpt_to_ch_dists = [float(trp_midpt_to_sugar_ch_dict[trp_to_sugar_id])
                              for trp_to_sugar_id in trp_to_sugar_ids]
     # TRP NE1 CE2 CD2 to sugar CH atom dihedrals
     # also a little redundant, but again, ensuring correct order
-    trp_to_sugar_ch_dihedrals = [trp_to_sugar_ch_dihedral_dict[trp_to_sugar_id]
+    trp_to_sugar_ch_dihedrals = [float(trp_to_sugar_ch_dihedral_dict[trp_to_sugar_id])
                                  for trp_to_sugar_id in trp_to_sugar_ids]
     # TRP chi2 dihedrals
-    trp_chi2_dihedrals = [trp_chi2_dihedral_dict[trp_id]
+    trp_chi2_dihedrals = [float(trp_chi2_dihedral_dict[trp_id])
                           for trp_id in trp_ids]
 
     # all of the data lists at this point should be same length

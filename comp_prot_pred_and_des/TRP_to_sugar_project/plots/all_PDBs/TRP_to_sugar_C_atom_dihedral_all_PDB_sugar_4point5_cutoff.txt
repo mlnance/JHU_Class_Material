@@ -1,0 +1,6 @@
+plt.hist(x=df.TRP_to_CH_dihedral, zorder=100, color="red", bins=range(-180,181,10))
+plt.xlim([-180,180])
+plt.xticks(range(-180,181,30))
+plt.grid( zorder=0 )
+plt.xlabel("TRP to sugar C atom dihedral (degrees)")
+plt.ylabel("Count")

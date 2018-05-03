@@ -1,0 +1,14 @@
+df = pd.DataFrame().from_csv("TRP_to_all_PDB_sugar_features_4point5_cutoff.csv")
+plt.hist(x=df.TRP_midpt_to_CH_dist, zorder=100, color="green", bins=np.arange(2.5, 5.25, 0.25))
+plt.xticks(np.arange(2.5,5.25,0.25))
+plt.ylim([0,1300])
+plt.yticks(range(0,1400,100))
+plt.grid( zorder=0 )
+plt.xlabel("TRP to sugar C atom distance (Angstrom)")
+plt.ylabel("Count")
+
+mean(df.TRP_midpt_to_CH_dist)
+Out[26]: 3.9383835616438403
+
+std(df.TRP_midpt_to_CH_dist)
+Out[30]: 0.26395667383470867
