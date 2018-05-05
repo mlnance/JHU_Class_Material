@@ -433,8 +433,24 @@ for pdb_file in pdb_files:
         # so I need to finish the math
         # to get the angle in degrees, do: (180 * float(plane_angle)) / pi
         plane_angle_rads = trp_plane.angle_between(sugar_plane)
-        plane_angle = round( (180 * float(plane_angle_rads)) / pi,
-                             3)
+        plane_angle = round( (180 * float(plane_angle_rads)) / pi, 3)
+
+        # ***** ASSUMPTION MADE HERE *****
+        # we are going to assume that an angle of 0 is the equivalent
+        # of an angle of 180. That is basically the sugar perfectly
+        # stacked over the Trp in one conformation or flipped the other way
+        # so we want our data to be adjusted so that is centered on one value
+        # instead of being bimodal
+        # we will therefore flip angle values that are 90 degrees or greater
+        # by subtracting 180 from them and taking the absolute value
+        # (angles are either 0 or some positive value)
+        # basically, given the way that the planes are defined,
+        # the difference is if the nitrogen of the TRP and the oxygen
+        # of the sugar are on the same side or not
+        # AND if the oxygen (and the two carbons) of the sugar
+        # are pointing up or down with respect to the TRP
+        if plane_angle >= 90:
+            plane_angle = abs(plane_angle - 180)
 
         # add this plane angle to the dictionary using the combined
         # trp and sugar id
