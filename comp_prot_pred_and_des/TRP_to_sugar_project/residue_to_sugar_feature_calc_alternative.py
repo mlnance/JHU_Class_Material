@@ -22,8 +22,11 @@ import sys
 import os
 import gzip
 from math import sqrt
+from math import pi
+from time import time
 import pandas as pd
 from dihedral_angle import calc_dihedral_angle
+from sympy import Plane, Point3D
 
 
 ###############
@@ -34,7 +37,10 @@ sugar_residue_names = ["BGC", "GLC", "BMA",
                        "FUC",
                        "Glc", "Man", "Fuc"]
 # pyranose rings have 5 carbons in the ring
-sugar_ring_atoms = ["C1", "C2", "C3", "C4", "C5"]
+# and one oxygen atom
+# I'm sure there are exceptions, but first round should be generic
+# and specific to get an understanding of the data
+sugar_ring_atoms = ["C1", "C2", "C3", "C4", "C5", "O5"]
 # for pruning which TRP to sugar midpoint contacts to keep
 # based on distance in Angstroms
 trp_to_sugar_midpt_cutoff = 4.5
@@ -43,9 +49,11 @@ df_columns = ["PDB", "TRP_resnum", "TRP_chain",
               "sugar_resname", "sugar_resnum", "sugar_chain",
               "TRP_midpt_xyz", "sugar_midpt_xyz",
               "TRP_midpt_to_sugar_midpt_dist",
-              "TRP_to_sugar_midpt_dihedral",
+              "TRP_to_sugar_plane_angle",
               "TRP_chi2_dihedral"]
 df = pd.DataFrame(columns = df_columns)
+# start time
+start = time()
 
 
 ##############
@@ -109,8 +117,11 @@ for pdb_file in pdb_files:
                   if l.startswith("ATOM")
                   or l.startswith("HETATM") and l[17:20].strip() != "HOH"]
     # pull out just the TRP residue lines for quicker parsing later
+    # and only pull out TRP residues of one conformation
+    # so either they are full occupancy or take the A occupancy
     trp_lines = [l for l in atom_lines
-                 if l[17:20].strip() == "TRP"]
+                 if l[17:20].strip() == "TRP"
+                 and (l[16:17] == " " or l[16:17] == "A")]
     # delete the pdb_lines now as we don't need all of them
     # and might as well free up some space
     del(pdb_lines)
@@ -134,13 +145,15 @@ for pdb_file in pdb_files:
             trp_dict[trp_id] = [trp_line]
         # if we already have this trp_id, add the trp_line
         else:
-            trp_dict[trp_id].append(trp_line)        
-
+            trp_dict[trp_id].append(trp_line)
+    # if no TRP residues, skip this PDB
+    if len(trp_dict) == 0:
+        continue
 
 #############################
 # GET TRP CD2 CE2 MIDPOINTS #
 #############################
-    # key: resnum_chain, value: [x, y, z]
+    # key: PDBname_TRPresnum_chain, value: [x, y, z]
     trp_cd2_ce2_midpoints = {}
     # trp_id = PDBname_TRPresnum_chain
     for trp_id, trp_res in trp_dict.iteritems():
@@ -190,12 +203,15 @@ for pdb_file in pdb_files:
         # if we already have this sugar_id, add the sugar_line
         else:
             sugar_dict[sugar_id].append(sugar_line)
+    # if no sugar residues, skip this PDB
+    if len(sugar_dict) == 0:
+        continue
 
 
 #################################
 # GET SUGAR O5 AND C3 MIDPOINTS #
 #################################
-    # key: resnum_chain, value: [x, y, z]
+    # key: PDBname_SUGARresname_resnum_chain, value: [x, y, z]
     sugar_o5_c3_midpoints = {}
     # sugar_id = PDBname_SUGARresname_resnum_chain
     for sugar_id, sugar_res in sugar_dict.iteritems():
@@ -311,9 +327,125 @@ for pdb_file in pdb_files:
                              in trp_midpt_to_sugar_midpt_dict.keys() }
 
 
+###########################################
+# CALCULATE PLANE BETWEEN TRP NE1 CD2 CH2 #
+###########################################
+    # arbitrary choice, but assuming this captures the
+    # aromatic plane of the TRP residue
+    # key: PDBname_TRPresnum_chain, value: [x, y, z]
+    trp_ne1_cd2_ch2_planes = {}
+    # trp_id = PDBname_TRPresnum_chain
+    for trp_id, trp_res in trp_dict.iteritems():
+        ne1_line = ""
+        cd2_line = ""
+        ch2_line = ""
+        # get the NE1, CD2, and CH2 atom info
+        for atom_line in trp_res:
+            if atom_line[12:16].strip() == "NE1":
+                # xyz info for NE1 atom
+                ne1_line = atom_line
+                ne1_x = float(atom_line[30:38].strip())
+                ne1_y = float(atom_line[38:46].strip())
+                ne1_z = float(atom_line[46:54].strip())
+            if atom_line[12:16].strip() == "CD2":
+                # xyz info for CD2 atom
+                cd2_line = atom_line
+                cd2_x = float(atom_line[30:38].strip())
+                cd2_y = float(atom_line[38:46].strip())
+                cd2_z = float(atom_line[46:54].strip())
+            if atom_line[12:16].strip() == "CH2":
+                # xyz info for CH2 atom
+                ch2_line = atom_line
+                ch2_x = float(atom_line[30:38].strip())
+                ch2_y = float(atom_line[38:46].strip())
+                ch2_z = float(atom_line[46:54].strip())
+        # calculate the plane between the NE1, CD2, and CE2 atoms
+        plane = Plane( Point3D(ne1_x, ne1_y, ne1_z),
+                       Point3D(cd2_x, cd2_y, cd2_z),
+                       Point3D(ch2_x, ch2_y, ch2_z) )
+        # add to the dictionary
+        trp_ne1_cd2_ch2_planes[trp_id] = plane
+
+
+##########################################
+# CALCULATE PLANE BETWEEN SUGAR C4 O5 C2 #
+##########################################
+    # arbitrary choice, but assuming this captures the
+    # plane of the sugar residue
+    # key: PDBname_SUGARresname_resnum_chain, value: [x, y, z]
+    sugar_c4_o5_c2_planes = {}
+    # sugar_id = PDBname_SUGARresname_resnum_chain
+    for sugar_id, sugar_res in sugar_dict.iteritems():
+        c4_line = ""
+        o5_line = ""
+        c2_line = ""
+        # get the C4, O5, and C2 atom info
+        for atom_line in sugar_res:
+            if atom_line[12:16].strip() == "C4":
+                # xyz info for C4 atom
+                c4_line = atom_line
+                c4_x = float(atom_line[30:38].strip())
+                c4_y = float(atom_line[38:46].strip())
+                c4_z = float(atom_line[46:54].strip())
+            if atom_line[12:16].strip() == "O5":
+                # xyz info for O5 atom
+                o5_line = atom_line
+                o5_x = float(atom_line[30:38].strip())
+                o5_y = float(atom_line[38:46].strip())
+                o5_z = float(atom_line[46:54].strip())
+            if atom_line[12:16].strip() == "C2":
+                # xyz info for C2 atom
+                c2_line = atom_line
+                c2_x = float(atom_line[30:38].strip())
+                c2_y = float(atom_line[38:46].strip())
+                c2_z = float(atom_line[46:54].strip())
+        # calculate the plane between the C4, O5, and CE2 atoms
+        plane = Plane( Point3D(c4_x, c4_y, c4_z),
+                       Point3D(o5_x, o5_y, o5_z),
+                       Point3D(c2_x, c2_y, c2_z) )
+        # add to the dictionary
+        sugar_c4_o5_c2_planes[sugar_id] = plane
+
+
+################################################
+# CALCULATE ANGLE BETWEEN TRP AND SUGAR PLANES #
+################################################
+    # the two planes calculated for the TRP and sugar residues
+    # should roughly capture the CH-pi stacking between the residues
+    # for each TRP residue that has a relevant calculation to make
+    # i.e. it has a TRP midpoint to sugar midpoint distance below the cutoff
+    # calculate the plane between the TRP and sugar residues
+    # key: PDBname_TRPresnum_chain+PDBname_SUGARresname_resnum_chain
+    # value: TRP NE1, CD2, CH2 plane to sugar C4, O5, C2 plane angle
+    trp_to_sugar_plane_angle_dict = {}
+    for trp_to_sugar_id in trp_midpt_to_sugar_midpt_dict.keys():
+        # pull out the trp_id
+        trp_id = trp_to_sugar_id.split("+")[0]
+        # pull out the sugar id too
+        sugar_id = trp_to_sugar_id.split("+")[-1]
+
+        # grab the Plane objects for the TRP and sugar residue
+        trp_plane = trp_ne1_cd2_ch2_planes[trp_id]
+        sugar_plane = sugar_c4_o5_c2_planes[sugar_id]
+
+        # calculate the angle between the two planes
+        # this function returns acos(some value) (this is radians)
+        # so I need to finish the math
+        # to get the angle in degrees, do: (180 * float(plane_angle)) / pi
+        plane_angle_rads = trp_plane.angle_between(sugar_plane)
+        plane_angle = round( (180 * float(plane_angle_rads)) / pi,
+                             3)
+
+        # add this plane angle to the dictionary using the combined
+        # trp and sugar id
+        trp_to_sugar_plane_angle_dict[trp_to_sugar_id] = plane_angle
+        
+
+
 # TODO
 # check that the distance between sugar O5 and C3 atoms is at least 2.8-2.9?
 # calc that for all PDBs and see what the min and max is and if they are right
+    '''
 ######################################################
 # CALCULATE DIHEDRAL BETWEEN TRP CE2 CD2 SUGAR O5 C3 #
 ######################################################
@@ -371,6 +503,7 @@ for pdb_file in pdb_files:
                                                           sugar_C3_xyz), 3)
         # add to the dictionary given the TRP to sugar id key
         trp_to_sugar_dihedral_dict[trp_to_sugar_id] = trp_to_sugar_dihedral
+    '''
 
 
 ###############################################
@@ -463,10 +596,17 @@ for pdb_file in pdb_files:
     # a little redundant, but explicit to ensure the correct order of things
     trp_midpt_to_sugar_midpt_dists = [float(trp_midpt_to_sugar_midpt_dict[trp_to_sugar_id])
                                       for trp_to_sugar_id in trp_to_sugar_ids]
+
     # TRP CE2 CD2 to sugar O5 C3 dihedrals
     # also a little redundant, but again, ensuring correct order
-    trp_to_sugar_dihedrals = [float(trp_to_sugar_dihedral_dict[trp_to_sugar_id])
-                                    for trp_to_sugar_id in trp_to_sugar_ids]
+    #trp_to_sugar_dihedrals = [float(trp_to_sugar_dihedral_dict[trp_to_sugar_id])
+    #                                for trp_to_sugar_id in trp_to_sugar_ids]
+
+    # TRP NE1, CD2, CH2 plane to sugar C4, O5, C2 plane angle
+    # also a little redundant, but again, ensuring correct order
+    trp_to_sugar_plane_angles = [float(trp_to_sugar_plane_angle_dict[trp_to_sugar_id])
+                                 for trp_to_sugar_id in trp_to_sugar_ids]
+
     # TRP chi2 dihedrals
     trp_chi2_dihedrals = [float(trp_chi2_dihedral_dict[trp_id])
                           for trp_id in trp_ids]
@@ -487,5 +627,10 @@ for pdb_file in pdb_files:
                            trp_midpt_xyzs[ii],
                            sugar_midpt_xyzs[ii],
                            trp_midpt_to_sugar_midpt_dists[ii],
-                           trp_to_sugar_dihedrals[ii],
+                           trp_to_sugar_plane_angles[ii],
+                           #trp_to_sugar_dihedrals[ii],
                            trp_chi2_dihedrals[ii]]
+
+# end time
+end = time()
+print "\nThis took %s seconds\n" %(round(end - start, 3))
