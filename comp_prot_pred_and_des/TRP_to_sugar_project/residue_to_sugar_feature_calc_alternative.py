@@ -49,6 +49,7 @@ df_columns = ["PDB", "TRP_resnum", "TRP_chain",
               "sugar_resname", "sugar_resnum", "sugar_chain",
               "TRP_midpt_xyz", "sugar_midpt_xyz",
               "TRP_midpt_to_sugar_midpt_dist",
+              "TRP_to_sugar_plane_angle_raw",
               "TRP_to_sugar_plane_angle",
               "TRP_chi2_dihedral"]
 df = pd.DataFrame(columns = df_columns)
@@ -417,6 +418,9 @@ for pdb_file in pdb_files:
     # calculate the plane between the TRP and sugar residues
     # key: PDBname_TRPresnum_chain+PDBname_SUGARresname_resnum_chain
     # value: TRP NE1, CD2, CH2 plane to sugar C4, O5, C2 plane angle
+    # see below for why, but keeping the raw value and the value
+    # you get after you subtract 180 and take the absolute value
+    trp_to_sugar_plane_angle_raw_dict = {}
     trp_to_sugar_plane_angle_dict = {}
     for trp_to_sugar_id in trp_midpt_to_sugar_midpt_dict.keys():
         # pull out the trp_id
@@ -434,6 +438,10 @@ for pdb_file in pdb_files:
         # to get the angle in degrees, do: (180 * float(plane_angle)) / pi
         plane_angle_rads = trp_plane.angle_between(sugar_plane)
         plane_angle = round( (180 * float(plane_angle_rads)) / pi, 3)
+
+        # add this raw plane_angle to the dictionary using the combined
+        # trp and sugar id
+        trp_to_sugar_plane_angle_raw_dict[trp_to_sugar_id] = plane_angle
 
         # ***** ASSUMPTION MADE HERE *****
         # we are going to assume that an angle of 0 is the equivalent
@@ -454,6 +462,7 @@ for pdb_file in pdb_files:
 
         # add this plane angle to the dictionary using the combined
         # trp and sugar id
+        # this could be the same as plane_angle_raw
         trp_to_sugar_plane_angle_dict[trp_to_sugar_id] = plane_angle
         
 
@@ -620,6 +629,8 @@ for pdb_file in pdb_files:
 
     # TRP NE1, CD2, CH2 plane to sugar C4, O5, C2 plane angle
     # also a little redundant, but again, ensuring correct order
+    trp_to_sugar_plane_angles_raw = [float(trp_to_sugar_plane_angle_raw_dict[trp_to_sugar_id])
+                                     for trp_to_sugar_id in trp_to_sugar_ids]
     trp_to_sugar_plane_angles = [float(trp_to_sugar_plane_angle_dict[trp_to_sugar_id])
                                  for trp_to_sugar_id in trp_to_sugar_ids]
 
@@ -643,6 +654,7 @@ for pdb_file in pdb_files:
                            trp_midpt_xyzs[ii],
                            sugar_midpt_xyzs[ii],
                            trp_midpt_to_sugar_midpt_dists[ii],
+                           trp_to_sugar_plane_angles_raw[ii],
                            trp_to_sugar_plane_angles[ii],
                            #trp_to_sugar_dihedrals[ii],
                            trp_chi2_dihedrals[ii]]
