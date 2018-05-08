@@ -1,19 +1,9 @@
 #!/usr/bin/python
 
-
-'''
-TODO: make this work on a directory of pdb structs and write to one df
-have to change how data gets added to df? dictionaries are instantiated when needed
-maybe make all dicts in the beginning before for loop and then add to them continuously
-store pdb name in the df too
-clarify intent of getting atom names and stuff
-clarify why I am using an atom id
-edit so that no multi-occupancy counting occurs (ensure blank or A)
-three TRP atoms to 1 sugar atom doesn't really capture planarity though
-look at 1tfv as an example
-how to check planarity between trp and sugar?
-'''
-
+"""
+This code will take a single pdb file or a directory and calculate
+different features between tryptophan residues and nearby carbohydrates
+"""
 
 ###########
 # IMPORTS #
