@@ -1,0 +1,7 @@
+plt.hist(pruned_df.TRP_chi2_dihedral, zorder=100, color="purple", bins=range(-180,181,15))
+plt.xlim([-180,180])
+plt.xticks(range(-180,181,30))
+plt.grid(zorder=0)
+plt.xlabel(r'$\chi$ (degrees)', fontsize=20)
+plt.ylabel("Count", fontsize=18)
+plt.savefig("TRP_to_sugar_features_on_PatternQuery_pdbs_4point5_dist_cutoff_frequency_of_chi.png", dpi=600, transparent=True)
