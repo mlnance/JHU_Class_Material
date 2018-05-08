@@ -1,0 +1,7 @@
+plt.hist(pruned_df.TRP_midpt_to_sugar_midpt_dist, zorder=100, color="blue")
+plt.xticks(np.arange(3,4.75,0.25))
+plt.xlim([3,4.5])
+plt.grid(zorder=0)
+plt.xlabel("L", fontstyle="italic", fontweight="bold", fontsize=18)
+plt.ylabel("Count", fontsize=18)
+plt.savefig("TRP_to_sugar_features_on_PatternQuery_pdbs_4point5_dist_cutoff_frequency_of_L_distance.png", dpi=600, transparent=True)

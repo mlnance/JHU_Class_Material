@@ -1,0 +1,5 @@
+plt.hist(x=pruned_df.TRP_to_sugar_plane_angle, zorder=100, color="red", bins=range(0,100,10))
+plt.xlabel(r'$\theta$ (degrees)', fontsize=20)
+plt.ylabel("Count", fontsize=18)
+plt.grid(zorder=0)
+plt.savefig("TRP_to_sugar_features_on_PatternQuery_pdbs_4point5_dist_cutoff_frequency_of_theta.png", dpi=600, transparent=True)
