@@ -1,0 +1,28 @@
+Found rosetta database at: /Library/Python/2.7/site-packages/pyrosetta-4.0-py2.7-macosx-10.12-intel.egg/pyrosetta/database; using it....
+PyRosetta-4 2016 [Rosetta 2016 unknown:a19ad2ea80d9e9e4c5e99a617b8c2941a5b5e5ba 2017-09-19 09:49:00 -0700] retrieved from: git@github.com:RosettaCommons/main.git
+(C) Copyright Rosetta Commons Member Institutions.
+Created in JHU by Sergey Lyskov and PyRosetta Team.
+
+(Ran using 1m40.pdb as the input)
+
+     HELIX	SHEET	LOOP
+ALA: 0.105	0.096	0.036
+CYS: 0.013	0.0	0.0
+GLU: 0.086	0.084	0.0
+ASP: 0.053	0.072	0.071
+GLY: 0.026	0.036	0.5
+PHE: 0.013	0.036	0.0
+ILE: 0.039	0.108	0.0
+HIS: 0.026	0.012	0.036
+LYS: 0.053	0.036	0.0
+MET: 0.039	0.012	0.036
+LEU: 0.158	0.072	0.036
+ASN: 0.046	0.0	0.036
+GLN: 0.046	0.012	0.0
+PRO: 0.046	0.06	0.0
+SER: 0.053	0.06	0.071
+ARG: 0.046	0.108	0.071
+THR: 0.079	0.096	0.036
+TRP: 0.013	0.024	0.0
+VAL: 0.059	0.048	0.0
+TYR: 0.0	0.024	0.071
